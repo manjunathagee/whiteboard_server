@@ -18,13 +18,12 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("user connected");
-  io.to(socket.io).emit("whiteboard-state", elements);
+  io.to(socket.id).emit("whiteboard-state", elements);
 
   socket.on("element-update", (elementData) => {
     updateLocalElement(elementData);
 
-    socket.broadcast("element-update", elementData);
+    socket?.broadcast.emit("element-update", elementData);
   });
 });
 
@@ -41,9 +40,7 @@ server.listen(PORT, () => {
 const updateLocalElement = (elementData) => {
   const elementInx = elements.findIndex((ele) => ele.id === elementData.id);
 
-  if (elementData === -1) {
-    return elements.push(elementData);
-  } else {
-    return (elements[elementInx] = elementData);
-  }
+  if (elementInx === -1) return elements.push(elementData);
+
+  elements[elementInx] = elementData;
 };
